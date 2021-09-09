@@ -1,56 +1,63 @@
 from flask import Flask, request, redirect
 import time
-import sqlite3
-
+import pymysql
 
 app = Flask(__name__)
 
+DB_HOST="database-1.cdbrt00yi2pz.ap-northeast-2.rds.amazonaws.com"
+DB_USER="admin"
+DB_PASS="11111111"
+DB_DATABASE="myflask"
 
 @app.route('/create_process', methods=['POST'])
 def create_process():
-    cnt = sqlite3.connect('topics.db')
+    cnt = pymysql.connect(host=DB_HOST,user=DB_USER,password=DB_PASS,database=DB_DATABASE)
+    cursor=cnt.cursor()
     title = request.form.get('title')
     body = request.form.get('body')
     sql = "INSERT INTO topic (title, body) VALUES('"+title+"','"+body+"')"
-    result = cnt.execute(sql)
+    result = cursor.execute(sql)
     cnt.commit()
-    url = '/read/'+str(result.lastrowid)
+    url = '/read/'+str(cursor.lastrowid)
     return redirect(url) 
 
 @app.route('/delete_process', methods=['POST'])
 def delete_process():
-    cnt = sqlite3.connect('topics.db')
+    cnt = pymysql.connect(host=DB_HOST,user=DB_USER,password=DB_PASS,database=DB_DATABASE)
+    cursor = cnt.cursor()
     id = request.form.get('id')    
     sql = "DELETE FROM topic WHERE id="+id
-    result = cnt.execute(sql)
+    result = cursor.execute(sql)
     cnt.commit()    
     return redirect('/')
 
 @app.route('/update_process', methods=['POST'])
 def update_process():
-    cnt = sqlite3.connect('topics.db')
+    cnt = pymysql.connect(host=DB_HOST,user=DB_USER,password=DB_PASS,database=DB_DATABASE)
+    cursor = cnt.cursor()
     id = request.form.get('id')    
     title = request.form.get('title')
     body = request.form.get('body')
     sql = "UPDATE topic SET title='"+title+"', body='"+body+"' WHERE id="+id
-    print('sql', sql)
-    result = cnt.execute(sql)
+    result = cursor.execute(sql)
     cnt.commit()    
     return redirect('/read/'+id)
 
 @app.route('/update/<topicid>')
 def update(topicid):
-    cnt = sqlite3.connect('topics.db')
-    result = cnt.execute('SELECT * FROM topic')
-    topics = result.fetchall()    
+    cnt = pymysql.connect(host=DB_HOST,user=DB_USER,password=DB_PASS,database=DB_DATABASE)
+    cursor=cnt.cursor()
+    cursor.execute('SELECT * FROM topic')
+    topics = cursor.fetchall()    
     contents = '<h1><a href="/">Web</a></h1>'
     contents += '<ol>'
     for id, title,body in topics:
         contents += '<li><a href="/read/'+str(id)+'">'+title+'</a></li>'
     contents += '</ol>'
     
-    result = cnt.execute('SELECT * FROM topic WHERE id='+topicid)
-    topic = result.fetchone()
+    cursor=cnt.cursor()
+    cursor.execute('SELECT * FROM topic WHERE id='+topicid)
+    topic = cursor.fetchone()
 
     contents +='<h2>Update</h2>'
     contents += '''
@@ -65,9 +72,10 @@ def update(topicid):
 
 @app.route('/create')
 def create():
-    cnt = sqlite3.connect('topics.db')
-    result = cnt.execute('SELECT * FROM topic')
-    topics = result.fetchall()    
+    cnt = pymysql.connect(host=DB_HOST,user=DB_USER,password=DB_PASS,database=DB_DATABASE)
+    cursor=cnt.cursor()
+    cursor.execute('SELECT * FROM topic')
+    topics = cursor.fetchall()    
     contents = '<h1><a href="/">Web</a></h1>'
     contents += '<ol>'
     for id, title,body in topics: 
@@ -86,17 +94,19 @@ def create():
 
 @app.route('/read/<topicid>')
 def read_topic(topicid ):
-    cnt = sqlite3.connect('topics.db')
-    result = cnt.execute('SELECT * FROM topic')
-    topics = result.fetchall()    
+    cnt = pymysql.connect(host=DB_HOST,user=DB_USER,password=DB_PASS,database=DB_DATABASE)
+    cursor=cnt.cursor()
+    cursor.execute('SELECT * FROM topic')
+    topics = cursor.fetchall()    
     contents = '<h1><a href="/">Web</a></h1>'
     contents += '<ol>'
     for id, title,body in topics: 
         contents += '<li><a href="/read/'+str(id)+'">'+title+'</a></li>'
     contents += '</ol>'
 
-    result = cnt.execute('SELECT * FROM topic WHERE id='+topicid)
-    topic = result.fetchone()
+    cursor=cnt.cursor()
+    cursor.execute('SELECT * FROM topic WHERE id='+topicid)
+    topic = cursor.fetchone()
     contents += '<h1>'+topic[1]+'</h1>'+topic[2]
     contents += '<p><a href="/create">create</a></p>'
     contents += '<p><a href="/update/'+topicid+'">update</a></p>'
@@ -108,12 +118,12 @@ def read_topic(topicid ):
                     </form>
                 </p>'''
     return contents
-
 @app.route('/')
 def home():
-    cnt = sqlite3.connect('topics.db')
-    result = cnt.execute('SELECT * FROM topic')
-    topics = result.fetchall()
+    cnt = pymysql.connect(host=DB_HOST,user=DB_USER,password=DB_PASS,database=DB_DATABASE)
+    cursor=cnt.cursor()
+    cursor.execute('SELECT * FROM topic')
+    topics = cursor.fetchall()
     print('topics', topics)
     contents = '<h1><a href="/">Web</a></h1>'
     contents += '<ol>'
