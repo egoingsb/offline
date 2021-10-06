@@ -9,6 +9,7 @@ DB_USER="admin"
 DB_PASS="11111111"
 DB_DATABASE="myflask"
 
+
 @app.route('/create_process', methods=['POST'])
 def create_process():
     cnt = pymysql.connect(host=DB_HOST,user=DB_USER,password=DB_PASS,database=DB_DATABASE)
@@ -47,7 +48,7 @@ def update_process():
 def update(topicid):
     cnt = pymysql.connect(host=DB_HOST,user=DB_USER,password=DB_PASS,database=DB_DATABASE)
     cursor=cnt.cursor()
-    cursor.execute('SELECT * FROM topic')
+    cursor.execute('SELECT id,title,body FROM topic')
     topics = cursor.fetchall()    
     contents = '<h1><a href="/">Web</a></h1>'
     contents += '<ol>'
@@ -74,7 +75,7 @@ def update(topicid):
 def create():
     cnt = pymysql.connect(host=DB_HOST,user=DB_USER,password=DB_PASS,database=DB_DATABASE)
     cursor=cnt.cursor()
-    cursor.execute('SELECT * FROM topic')
+    cursor.execute('SELECT id,title,body FROM topic')
     topics = cursor.fetchall()    
     contents = '<h1><a href="/">Web</a></h1>'
     contents += '<ol>'
@@ -96,16 +97,16 @@ def create():
 def read_topic(topicid ):
     cnt = pymysql.connect(host=DB_HOST,user=DB_USER,password=DB_PASS,database=DB_DATABASE)
     cursor=cnt.cursor()
-    cursor.execute('SELECT * FROM topic')
+    cursor.execute('SELECT id,title,body FROM topic')
     topics = cursor.fetchall()    
     contents = '<h1><a href="/">Web</a></h1>'
     contents += '<ol>'
-    for id, title,body in topics: 
+    for id, title, body in topics: 
         contents += '<li><a href="/read/'+str(id)+'">'+title+'</a></li>'
     contents += '</ol>'
 
     cursor=cnt.cursor()
-    cursor.execute('SELECT * FROM topic WHERE id='+topicid)
+    cursor.execute('SELECT id,title,body FROM topic WHERE id='+topicid)
     topic = cursor.fetchone()
     contents += '<h1>'+topic[1]+'</h1>'+topic[2]
     contents += '<p><a href="/create">create</a></p>'
@@ -122,12 +123,12 @@ def read_topic(topicid ):
 def home():
     cnt = pymysql.connect(host=DB_HOST,user=DB_USER,password=DB_PASS,database=DB_DATABASE)
     cursor=cnt.cursor()
-    cursor.execute('SELECT * FROM topic')
+    cursor.execute('SELECT id,title,body FROM topic')
     topics = cursor.fetchall()
     print('topics', topics)
     contents = '<h1><a href="/">Web</a></h1>'
     contents += '<ol>'
-    for id, title,body in topics: 
+    for id, title, body in topics: 
         contents += '<li><a href="/read/'+str(id)+'">'+title+'</a></li>'
     contents += '</ol>'
     contents +='<h2>Welcome</h2>Hello, WEB'
