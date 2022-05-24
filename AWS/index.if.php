@@ -5,11 +5,11 @@
         <meta charset="utf-8">
     </head>
     <body>
-        <h1><a href="index.html">WEB</a></h1>
+        <h1><a href="index.php">WEB</a></h1>
         <ol>
-            <li><a href="1.html">html</a></li>
-            <li><a href="2.html">css</a></li>
-            <li><a href="3.html">js</a></li>
+            <li><a href="index.php?id=1">html</a></li>
+            <li><a href="index.php?id=2">css</a></li>
+            <li><a href="index.php?id=3">js</a></li>
         </ol>
         <?php
             if(empty($_GET['id'])){
