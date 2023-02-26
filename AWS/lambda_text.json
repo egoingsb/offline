@@ -1,6 +1,5 @@
 {
   "pathParameters": {
-    "parameter1": "value1",
-    "parameter2": "value2"
+    "id": "1"
   }
 }
